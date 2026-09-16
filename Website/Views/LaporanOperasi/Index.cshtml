@@ -1,0 +1,113 @@
+@model IEnumerable<DokterAbdurrahman.Models.LaporanOperasi>
+
+@{
+    ViewData["Title"] = "Laporan Operasi";
+}
+
+<h1>Laporan Operasi</h1>
+
+<div class="row mb-3">
+    <div class="col-md-4">
+        <a asp-action="Create" class="btn btn-primary">Create New</a>
+        <a asp-action="Import" class="btn btn-success">Import Excel</a>
+    </div>
+    <div class="col-md-8">
+         <form asp-action="Index" method="get" class="row g-2 justify-content-end align-items-center">
+            <div class="col-auto">
+                <label class="col-form-label">Filter:</label>
+            </div>
+            <div class="col-auto">
+                <select name="year" class="form-select" asp-items="ViewBag.YearList" onchange="this.form.submit()">
+                    <option value="">All Years</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <select name="rumahSakitId" class="form-select" asp-items="ViewBag.RumahSakitId" onchange="this.form.submit()">
+                    <option value="">All Rumah Sakit</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <a asp-action="Index" class="btn btn-outline-secondary">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover" id="table-laporan">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Tgl</th>
+                <th>Pasien</th>
+                <th>Diagnosa</th>
+                <th>Tindakan</th>
+                <th>Operator</th>
+                <th>Lainnya</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model) {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Code)</td>
+                <td>@item.Tanggal.ToString("dd/MM/yyyy")</td>
+                <td>
+                    <strong>@item.Pasien?.Nama</strong><br />
+                    <small class="text-muted">No RM (RS): @(string.IsNullOrEmpty(item.NoRM) ? "-" : item.NoRM)</small>
+                </td>
+                <td>
+                    @if (item.LaporanOperasiDiagnosas != null && item.LaporanOperasiDiagnosas.Any())
+                    {
+                        <ul class="list-unstyled mb-0">
+                            @foreach (var d in item.LaporanOperasiDiagnosas)
+                            {
+                                <li>- @d.Diagnosa.Nama</li>
+                            }
+                        </ul>
+                    }
+                </td>
+                <td>@item.Tindakan?.Nama</td>
+                <td>@item.Operator?.Nama</td>
+                <td>
+                    @if(item.Medias != null && item.Medias.Any())
+                    {
+                        <div class="mb-1"><span class="badge bg-info">@item.Medias.Count Media</span></div>
+                    }
+                    @if(item.RumahSakit != null) { <div><small>RS: @item.RumahSakit.Nama</small></div> }
+                    @if(item.JenisTindakans != null && item.JenisTindakans.Any())
+                    {
+                        <div class="d-flex flex-wrap gap-1">
+                            @foreach(var jt in item.JenisTindakans)
+                            {
+                                <span class="badge bg-secondary" style="font-size:0.7em;">@jt.JenisTindakan?.Nama</span>
+                            }
+                        </div>
+                    }
+                </td>
+                <td>
+                    <div class="d-flex">
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white me-2">View</a>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning me-2">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                    </div>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#table-laporan').DataTable({
+                "pageLength": 10,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "scrollX": true
+            });
+        });
+    </script>
+}

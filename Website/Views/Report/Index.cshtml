@@ -1,0 +1,227 @@
+@model DokterAbdurrahman.Models.ReportViewModel
+@{
+    ViewData["Title"] = "Report & Statistics";
+}
+
+<div class="row mb-3">
+    <div class="col-md-12">
+        <form asp-action="Index" method="get" class="d-flex align-items-center gap-2">
+            <label class="fw-bold"><i class="fa fa-venus-mars me-1"></i>Gender:</label>
+            <select name="gender" class="form-select w-auto" asp-for="SelectedGender" asp-items="Model.GenderList" onchange="this.form.submit()">
+                <option value="">All Genders</option>
+            </select>
+            
+            <div class="vr mx-2"></div>
+            
+            <label class="fw-bold"><i class="fa fa-calendar me-1"></i>Year:</label>
+            <select name="year" class="form-select w-auto" asp-for="SelectedYear" asp-items="ViewBag.YearList" onchange="this.form.submit()">
+                <option value="">Last 12 Months</option>
+            </select>
+
+            <label class="fw-bold ms-2"><i class="fa fa-calendar-o me-1"></i>Month:</label>
+            <select name="month" class="form-select w-auto" asp-for="SelectedMonth" asp-items="ViewBag.MonthList" onchange="this.form.submit()">
+                <option value="">All Months</option>
+            </select>
+
+            <div class="vr mx-2"></div>
+            
+            <label class="fw-bold"><i class="fa fa-child me-1"></i>Age:</label>
+            <input type="number" name="minAge" class="form-control w-auto" placeholder="Min" style="max-width: 80px;" value="@Model.MinAge" />
+            <span class="mx-1">-</span>
+            <input type="number" name="maxAge" class="form-control w-auto" placeholder="Max" style="max-width: 80px;" value="@Model.MaxAge" />
+            
+            <button type="submit" class="btn btn-primary"><i class="fa fa-filter me-1"></i>Filter</button>
+
+            @if(!string.IsNullOrEmpty(Model.SelectedGender) || Model.MinAge.HasValue || Model.MaxAge.HasValue || Model.SelectedYear.HasValue || Model.SelectedMonth.HasValue)
+            {
+                <a asp-action="Index" class="btn btn-outline-secondary"><i class="fa fa-refresh me-1"></i>Reset</a>
+            }
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between">
+                <div class="header-title">
+                    <h4 class="card-title">Operations Trend (Last 12 Months)</h4>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="chart-ops-month" style="height: 350px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between">
+                <div class="header-title">
+                    <h4 class="card-title">Top 10 Diagnoses</h4>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="chart-top-diagnosa" style="height: 350px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between">
+                <div class="header-title">
+                    <h4 class="card-title">Top 10 Actions (Tindakan)</h4>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="chart-top-tindakan" style="height: 350px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between">
+                <div class="header-title">
+                    <h4 class="card-title">Operations by Hospital</h4>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="chart-ops-rs" style="height: 350px;"></div>
+            </div>
+        </div>
+    </div>
+    <!-- Placeholder for future reports -->
+    <div class="col-md-6">
+        
+    </div>
+</div>
+
+@section Scripts {
+    <!-- ApexCharts (Already included in external.min.js) -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script> -->
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            
+            // 1. Operations by Month Data
+            var monthsData = @Html.Raw(Json.Serialize(Model.OperationsByMonth));
+            var monthLabels = monthsData.map(x => x.label);
+            var monthValues = monthsData.map(x => x.value);
+
+            var optionsMonth = {
+                series: [{
+                    name: 'Operations',
+                    data: monthValues
+                }],
+                chart: {
+                    type: 'area',
+                    height: 350,
+                    zoom: { enabled: false }
+                },
+                dataLabels: { enabled: false },
+                stroke: { curve: 'smooth' },
+                xaxis: {
+                    categories: monthLabels
+                },
+                yaxis: {
+                    title: { text: 'Count' }
+                },
+                colors: ['#0d6efd']
+            };
+            var chartMonth = new ApexCharts(document.querySelector("#chart-ops-month"), optionsMonth);
+            chartMonth.render();
+
+            // 2. Top Diagnoses Data
+            var diagData = @Html.Raw(Json.Serialize(Model.TopDiagnoses));
+            var diagLabels = diagData.map(x => x.label);
+            var diagValues = diagData.map(x => x.value);
+
+            var optionsDiag = {
+                series: [{
+                    name: 'Count',
+                    data: diagValues
+                }],
+                chart: {
+                    type: 'bar',
+                    height: 350
+                },
+                plotOptions: {
+                    bar: {
+                        borderRadius: 4,
+                        horizontal: true,
+                    }
+                },
+                dataLabels: { enabled: false },
+                xaxis: {
+                    categories: diagLabels
+                },
+                colors: ['#198754']
+            };
+            var chartDiag = new ApexCharts(document.querySelector("#chart-top-diagnosa"), optionsDiag);
+            chartDiag.render();
+
+            // 3. Top Tindakan Data
+            var tindData = @Html.Raw(Json.Serialize(Model.TopTindakan));
+            var tindLabels = tindData.map(x => x.label);
+            var tindValues = tindData.map(x => x.value);
+
+            var optionsTind = {
+                series: [{
+                    name: 'Count',
+                    data: tindValues
+                }],
+                chart: {
+                    type: 'bar',
+                    height: 350
+                },
+                plotOptions: {
+                    bar: {
+                        borderRadius: 4,
+                        horizontal: true,
+                    }
+                },
+                dataLabels: { enabled: false },
+                xaxis: {
+                    categories: tindLabels
+                },
+                colors: ['#fd7e14']
+            };
+            var chartTind = new ApexCharts(document.querySelector("#chart-top-tindakan"), optionsTind);
+            chartTind.render();
+
+            // 4. Operations by Hospital (Pie)
+            var rsData = @Html.Raw(Json.Serialize(Model.OperationsByHospital));
+            var rsLabels = rsData.map(x => x.label);
+            var rsValues = rsData.map(x => x.value);
+
+            var optionsRS = {
+                series: rsValues,
+                chart: {
+                    width: 380,
+                    type: 'pie',
+                },
+                labels: rsLabels,
+                responsive: [{
+                    breakpoint: 480,
+                    options: {
+                        chart: {
+                            width: 200
+                        },
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }],
+                colors: ['#0dcaf0', '#6610f2', '#d63384', '#ffc107', '#20c997']
+            };
+            var chartRS = new ApexCharts(document.querySelector("#chart-ops-rs"), optionsRS);
+            chartRS.render();
+
+        });
+    </script>
+}

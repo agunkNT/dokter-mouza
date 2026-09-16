@@ -1,0 +1,57 @@
+name: CI/CD IIS Deployment
+
+on:
+  push:
+    branches:
+      - main # Atur branch utama Anda (misal: main atau master)
+  workflow_dispatch: # Mengizinkan trigger manual
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+
+    env:
+      IIS_DEPLOY_PATH: 'C:\inetpub\wwwroot\dr' # Path folder tujuan di IIS (sesuaikan jika di drive lain)
+      PROJECT_PATH: 'Website/DokterAbdurrahman.csproj'
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x' # Menggunakan .NET 10.0 sesuai .csproj
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.PROJECT_PATH }}
+
+      - name: Build
+        run: dotnet build ${{ env.PROJECT_PATH }} -c Release --no-restore
+
+      - name: Publish
+        run: dotnet publish ${{ env.PROJECT_PATH }} -c Release -o ./publish_output --no-build
+
+      - name: Deploy to IIS
+        shell: powershell
+        run: |
+          $deployPath = "${{ env.IIS_DEPLOY_PATH }}"
+          $publishFolder = ".\publish_output"
+          
+          # Membuat folder tujuan jika belum ada
+          if (-not (Test-Path $deployPath)) {
+              New-Item -ItemType Directory -Force -Path $deployPath
+          }
+
+          # Membuat app_offline.htm agar IIS mematikan aplikasi sementara (menghindari error file terkunci)
+          $appOfflinePath = Join-Path $deployPath "app_offline.htm"
+          "<html><body>Sedang maintenance / update aplikasi...</body></html>" | Out-File $appOfflinePath
+
+          # Tunggu sebentar agar IIS memproses app_offline.htm
+          Start-Sleep -Seconds 3
+
+          # Menyalin semua file publish ke folder IIS (overwrite)
+          Copy-Item -Path "$publishFolder\*" -Destination $deployPath -Recurse -Force
+
+          # Hapus app_offline.htm untuk menyalakan kembali aplikasi
+          Remove-Item $appOfflinePath -Force

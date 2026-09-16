@@ -1,0 +1,66 @@
+@model IList<Google.Apis.Drive.v3.Data.File>
+
+@{
+    ViewData["Title"] = "Google Drive Files";
+}
+
+<div class="container mt-4">
+    <h2>Google Drive Manager</h2>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">
+            <strong>Error:</strong> @ViewBag.Error
+            <p>Please ensure <code>credentials.json</code> is present in the root directory.</p>
+        </div>
+    }
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">@TempData["Message"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <div class="card mb-4">
+        <div class="card-header">
+            Upload New File (Image/Video)
+        </div>
+        <div class="card-body">
+            <form asp-action="Upload" method="post" enctype="multipart/form-data">
+                <div class="input-group">
+                    <input type="file" name="file" class="form-control" accept="image/*,video/*" />
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <h3>Files</h3>
+    @if (Model != null && Model.Count > 0)
+    {
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            @foreach (var file in Model)
+            {
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-truncate" title="@file.Name">@file.Name</h5>
+                            <p class="card-text"><small class="text-muted">@file.MimeType</small></p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="@file.WebViewLink" target="_blank" class="btn btn-sm btn-outline-primary">View</a>
+                            <a href="@file.WebContentLink" class="btn btn-sm btn-outline-secondary">Download</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>No files found or unable to list files.</p>
+    }
+</div>

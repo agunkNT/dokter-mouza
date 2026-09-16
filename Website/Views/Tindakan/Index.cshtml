@@ -1,0 +1,47 @@
+@model IEnumerable<DokterAbdurrahman.Models.Tindakan>
+
+@{
+    ViewData["Title"] = "Master Tindakan";
+}
+
+<h1>Master Tindakan</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
+<div class="table-responsive">
+    <table class="table table-striped table-hover" id="table-tindakan">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Nama</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model) {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Code)</td>
+                <td>@Html.DisplayFor(modelItem => item.Nama)</td>
+                <td>
+                    <div class="d-flex">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning me-2">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                    </div>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#table-tindakan').DataTable({
+                "scrollX": true,
+                "autoWidth": false
+            });
+        });
+    </script>
+}

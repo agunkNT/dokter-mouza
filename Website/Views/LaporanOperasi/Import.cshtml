@@ -1,0 +1,140 @@
+@section Scripts {
+    <script>
+        document.getElementById('importForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('fileInput');
+            if(fileInput.files.length === 0) {
+                alert("Please select a file.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            // UI Updates
+            const btn = document.getElementById('btnSubmit');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            
+            btn.disabled = true;
+            progressContainer.classList.remove('d-none');
+            progressBar.style.width = '0%';
+            progressText.innerText = 'Starting upload...';
+            progressBar.classList.add('progress-bar-animated');
+
+            try {
+                // 1. Start Import
+                const startResponse = await fetch('@Url.Action("StartImport")', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'RequestVerificationToken': document.getElementsByName('__RequestVerificationToken')[0].value
+                    }
+                });
+
+                if(!startResponse.ok) {
+                    throw new Error("Failed to start import: " + startResponse.statusText);
+                }
+
+                const startData = await startResponse.json();
+                const jobId = startData.jobId;
+
+                // 2. Poll Progress
+                const intervalId = setInterval(async () => {
+                    try {
+                        const statusResp = await fetch(`@Url.Action("ImportProgress")?jobId=${jobId}`);
+                        if(statusResp.ok) {
+                            const status = await statusResp.json();
+                            
+                            // Update UI
+                            const pct = status.progress || 0;
+                            progressBar.style.width = pct + '%';
+                            progressBar.innerText = pct + '%'; // Show % inside bar
+                            progressBar.setAttribute('aria-valuenow', pct);
+                            
+                            // Show Message + Percentage
+                            progressText.innerText = (status.message || 'Processing...') + ` (${pct}%)`;
+
+                            if(status.finished) {
+                                clearInterval(intervalId);
+                                progressBar.classList.remove('progress-bar-animated');
+                                
+                                if(status.success) {
+                                    progressBar.classList.add('bg-success');
+                                    progressText.innerText = "Completed! Redirecting...";
+                                    setTimeout(() => {
+                                        window.location.href = '@Url.Action("Index")';
+                                    }, 1000);
+                                } else {
+                                    progressBar.classList.add('bg-danger');
+                                    alert("Import Failed: " + status.message);
+                                    btn.disabled = false;
+                                }
+                            }
+                        }
+                    } catch (err) {
+                        console.error("Polling error", err);
+                    }
+                }, 1000); // Poll every 1s
+
+            } catch (error) {
+                console.error(error);
+                alert("An error occurred: " + error.message);
+                btn.disabled = false;
+                progressContainer.classList.add('d-none');
+            }
+        });
+    </script>
+}
+
+@{
+    ViewData["Title"] = "Import Laporan Operasi";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0"><i class="bi bi-file-earmark-spreadsheet me-2"></i>Import Laporan Operasi</h4>
+        </div>
+        <div class="card-body">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <form id="importForm" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <div class="mb-4 text-center">
+                            <div class="display-1 text-success mb-3">
+                                <i class="bi bi-file-excel"></i>
+                            </div>
+                            <p class="text-muted">Upload file Excel (.xlsx) untuk import data massal.</p>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label for="file" class="form-label fw-bold">Pilih File Excel</label>
+                            <input type="file" id="fileInput" name="file" class="form-control form-control-lg" accept=".xlsx" required />
+                            <div class="form-text text-muted mt-2">
+                                <small><i class="bi bi-info-circle me-1"></i> Catatan: Fitur ini hanya mengimport data teks. Foto dan Video dapat ditambahkan nanti melalui menu Edit.</small>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar (Hidden by default) -->
+                        <div id="progressContainer" class="mb-4 d-none">
+                            <label class="form-label text-primary fw-bold" id="progressText">Initializing...</label>
+                            <div class="progress" style="height: 25px;">
+                                <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Index" class="btn btn-outline-secondary me-md-2">Batal</a>
+                            <button type="submit" id="btnSubmit" class="btn btn-primary px-4">
+                                <i class="bi bi-upload me-2"></i>Mulai Import
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

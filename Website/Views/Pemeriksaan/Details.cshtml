@@ -1,0 +1,115 @@
+@model DokterAbdurrahman.Models.Pemeriksaan
+
+@{
+    ViewData["Title"] = "Pemeriksaan Details";
+}
+
+<div class="row mb-3">
+    <div class="col-md-12 d-flex justify-content-between align-items-center">
+        <h2>@ViewData["TitleHeader"] Details</h2>
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+            @if (Model.JenisPemeriksaan == "KONSULTASI_PRE")
+            {
+                <a asp-action="KonsultasiPre" class="btn btn-secondary">Back to List</a>
+            }
+            else
+            {
+                <a asp-action="ControlPost" class="btn btn-secondary">Back to List</a>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">Informasi Pemeriksaan</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Tanggal</dt>
+                    <dd class="col-sm-8">@Model.Tanggal.ToString("dd MMMM yyyy")</dd>
+
+                    <dt class="col-sm-4">Pasien</dt>
+                    <dd class="col-sm-8">
+                        <strong>@Model.Pasien?.Nama</strong><br />
+                        <span class="text-muted">No. RM: @Model.Pasien?.NoRM</span>
+                    </dd>
+
+                    <dt class="col-sm-4">Keluhan Utama</dt>
+                    <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.KeluhanUtama) ? "-" : Model.KeluhanUtama)</dd>
+
+                    <dt class="col-sm-4">Riwayat Penyakit Sekarang</dt>
+                    <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.RiwayatPenyakitSekarang) ? "-" : Model.RiwayatPenyakitSekarang)</dd>
+
+                    <dt class="col-sm-4">Tindakan</dt>
+                    <dd class="col-sm-8">@(Model.Tindakan?.Nama ?? "-")</dd>
+
+                    <dt class="col-sm-4">Keterangan</dt>
+                    <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.Keterangan) ? "-" : Model.Keterangan)</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-12 mt-4">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="card-title mb-0">Media (Foto & Video)</h5>
+            </div>
+            <div class="card-body">
+                @if (Model.Medias != null && Model.Medias.Any())
+                {
+                    <div class="row g-3">
+                    @foreach (var media in Model.Medias)
+                        {
+                            var mediaUrl = $"/Pemeriksaan/Media/{media.Id}";
+                            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                                <div class="card h-100 shadow-sm border-0">
+                                    @if (media.Type == DokterAbdurrahman.Models.MediaType.Foto)
+                                    {
+                                        <a href="@mediaUrl" target="_blank">
+                                            <div class="ratio ratio-4x3 bg-light overflow-hidden rounded-top">
+                                                <img src="@mediaUrl" class="card-img-top" style="object-fit: cover; height: 100%;" alt="Foto"
+                                                     onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'d-flex align-items-center justify-content-center h-100 text-muted\'><i class=\'bi bi-image fs-1\'></i></div>';">
+                                            </div>
+                                        </a>
+                                        <div class="card-body p-2 text-center bg-light rounded-bottom">
+                                            <a href="@mediaUrl" target="_blank" class="btn btn-sm btn-primary w-100">
+                                                <i class="bi bi-zoom-in me-1"></i>Lihat Foto
+                                            </a>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="ratio ratio-4x3 bg-dark d-flex align-items-center justify-content-center rounded-top">
+                                            <i class="bi bi-play-circle text-white" style="font-size: 3rem;"></i>
+                                        </div>
+                                        <div class="card-body p-2 text-center bg-light rounded-bottom">
+                                            <a href="@mediaUrl" target="_blank" class="btn btn-sm btn-danger w-100">
+                                                <i class="bi bi-play-fill me-1"></i>Tonton Video
+                                            </a>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <i class="fas fa-images text-muted mb-2" style="font-size: 3rem;"></i>
+                        <p class="text-muted">Tidak ada media untuk pemeriksaan ini.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+}

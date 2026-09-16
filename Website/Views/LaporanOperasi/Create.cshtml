@@ -1,0 +1,142 @@
+@model DokterAbdurrahman.Models.LaporanOperasi
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create Laporan Operasi</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="form-group mb-2">
+                <label asp-for="Tanggal" class="control-label"></label>
+                <input asp-for="Tanggal" class="form-control" type="date" />
+                <span asp-validation-for="Tanggal" class="text-danger"></span>
+            </div>
+
+            <!-- Pasien -->
+            <div class="form-group mb-2">
+                <label asp-for="PasienId" class="control-label">Pasien</label>
+                <select asp-for="PasienId" class="form-control" asp-items="ViewBag.PasienId">
+                    <option value="">-- Select Pasien --</option>
+                </select>
+                <span asp-validation-for="PasienId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-2">
+                <label asp-for="Umur" class="control-label">Umur saat Operasi</label>
+                <input asp-for="Umur" class="form-control" />
+                <span asp-validation-for="Umur" class="text-danger"></span>
+            </div>
+
+            <!-- Diagnosa -->
+            <div class="form-group mb-2">
+                <label class="control-label">Diagnosa (Hold Ctrl to select multiple)</label>
+                <select name="selectedDiagnosa" class="form-control" asp-items="ViewBag.DiagnosaId" multiple>
+                </select>
+            </div>
+
+            <!-- Tindakan -->
+            <div class="form-group mb-2">
+                <label asp-for="TindakanId" class="control-label">Tindakan</label>
+                <select asp-for="TindakanId" class="form-control" asp-items="ViewBag.TindakanId">
+                     <option value="">-- Select Tindakan --</option>
+                </select>
+            </div>
+
+            <div class="form-group mb-2">
+                <label class="control-label">Jenis Tindakan (Hold Ctrl to select multiple)</label>
+                <select name="selectedJenisTindakan" class="form-control" asp-items="ViewBag.JenisTindakanId" multiple>
+                </select>
+            </div>
+
+            <!-- Dokter -->
+            <div class="form-group mb-2">
+                <label asp-for="OperatorId" class="control-label">Operator</label>
+                 <select asp-for="OperatorId" class="form-control" asp-items="ViewBag.OperatorId">
+                     <option value="">-- Select Operator --</option>
+                </select>
+            </div>
+
+            <div class="form-group mb-2">
+                <label asp-for="DPJPId" class="control-label">DPJP</label>
+                 <select asp-for="DPJPId" class="form-control" asp-items="ViewBag.DPJPId">
+                     <option value="">-- Select DPJP --</option>
+                </select>
+            </div>
+
+
+
+             <!-- Rumah Sakit -->
+            <div class="form-group mb-2">
+                <label asp-for="RumahSakitId" class="control-label">Rumah Sakit</label>
+                 <select asp-for="RumahSakitId" class="form-control" asp-items="ViewBag.RumahSakitId">
+                     <option value="">-- Select Rumah Sakit --</option>
+                </select>
+            </div>
+
+             <div class="form-group mb-2">
+                <label asp-for="NoRM" class="control-label">No. Rekam Medis (RS)</label>
+                <input asp-for="NoRM" class="form-control" />
+                <span asp-validation-for="NoRM" class="text-danger"></span>
+            </div>
+
+            <!-- Flags -->
+            <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" id="Hidrosefalus" asp-for="Hidrosefalus">
+                <label class="form-check-label" for="Hidrosefalus">Hidrosefalus</label>
+            </div>
+
+             <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" id="ETV" asp-for="ETV">
+                <label class="form-check-label" for="ETV">ETV</label>
+            </div>
+
+            <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" id="Shunt" asp-for="Shunt">
+                <label class="form-check-label" for="Shunt">Shunt</label>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="GOS" class="control-label fw-bold">Glasgow Outcome Scale (GOS)</label>
+                <select asp-for="GOS" class="form-control">
+                    <option value="">-- Select GOS --</option>
+                    <option value="1">1 - Dead (Death due to the injury)</option>
+                    <option value="2">2 - Vegetative State (Minimal responsiveness, inability to interact)</option>
+                    <option value="3">3 - Severe Disability (Conscious but dependent on others for daily support)</option>
+                    <option value="4">4 - Moderate Disability (Independent at home but disabled in community/work)</option>
+                    <option value="5">5 - Good Recovery (Resumption of normal life, despite minor deficits)</option>
+                </select>
+                <span asp-validation-for="GOS" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-2">
+                <label asp-for="Keterangan" class="control-label"></label>
+                <textarea asp-for="Keterangan" class="form-control"></textarea>
+                <span asp-validation-for="Keterangan" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group mb-2">
+                <label class="control-label">Upload Foto (Bisa pilih banyak)</label>
+                <input type="file" name="fotos" class="form-control" accept="image/*" multiple />
+            </div>
+
+            <div class="form-group mb-2">
+                <label class="control-label">Upload Video (Bisa pilih banyak)</label>
+                <input type="file" name="videos" class="form-control" accept="video/*" multiple />
+            </div>
+            <div class="form-group mt-3">
+                <input type="submit" value="Create" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

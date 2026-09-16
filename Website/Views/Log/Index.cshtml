@@ -1,0 +1,83 @@
+@model DokterAbdurrahman.Models.LogViewModel
+
+@{
+    ViewData["Title"] = "System Logs";
+}
+
+<div class="container-fluid">
+    <h1 class="mb-4">System Logs</h1>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form asp-action="Index" method="get" class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="date" class="col-form-label">Select Date:</label>
+                </div>
+                <div class="col-auto">
+                    <input type="date" name="date" class="form-control" value="@Model.SelectedDate.ToString("yyyy-MM-dd")" />
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">Load Logs</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (Model.Logs.Count == 0)
+    {
+        <div class="alert alert-info">
+            No logs found for @Model.SelectedDate.ToShortDateString().
+            <br/>Possible reasons: No activity today, or log file does not exist yet.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-sm table-hover" style="font-family: monospace; font-size: 0.9em;" id="table-log">
+                <thead class="table-dark">
+                    <tr>
+                        <th style="width: 150px;">Timestamp</th>
+                        <th style="width: 80px;">Level</th>
+                        <th>Message</th>
+                        <th>Logger</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var log in Model.Logs)
+                    {
+                        var rowClass = log.Level.ToUpper() switch
+                        {
+                            "ERROR" => "table-danger",
+                            "FATAL" => "table-danger",
+                            "WARN" => "table-warning",
+                            "INFO" => "",
+                            _ => ""
+                        };
+
+                        <tr class="@rowClass">
+                            <td>@log.Timestamp.ToString("HH:mm:ss.fff")</td>
+                            <td><span class="badge @(log.Level == "ERROR" ? "bg-danger" : (log.Level == "WARN" ? "bg-warning text-dark" : "bg-info"))">@log.Level</span></td>
+                            <td class="text-break">
+                                <div>@log.Message</div>
+                                @if(!string.IsNullOrEmpty(log.Url)) { <div class="text-muted small">URL: @log.Url</div> }
+                                @if(!string.IsNullOrEmpty(log.Action)) { <div class="text-muted small">Action: @log.Action</div> }
+                            </td>
+                            <td class="small text-muted">@log.Logger</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#table-log').DataTable({
+                "order": [[ 0, "desc" ]], // Sort by Timestamp desc by default
+                "scrollX": true
+            });
+        });
+    </script>
+}

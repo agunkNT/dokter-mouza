@@ -1,0 +1,17 @@
+# .NET Core
+Website/bin/
+Website/obj/
+Website/.config/
+Website/.vs/
+Website/Properties/
+Website/Import/
+
+# Publish
+Website/publish/
+
+# Other common ignores
+*.user
+*.userosscache
+*.sln.docstates
+*.log
+
