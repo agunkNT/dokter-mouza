@@ -26,11 +26,11 @@ class DatabaseService {
 
   Future<Connection> _connect() async {
     final endpoint = Endpoint(
-      host: '103.151.140.138',
-      port: 5432,
-      database: 'db_dokterabdurrahman',
-      username: 'dokter_admin',
-      password: r'P@ssw0rdDokter2026!',
+      host: const String.fromEnvironment('DB_HOST', defaultValue: '103.151.140.138'),
+      port: const int.fromEnvironment('DB_PORT', defaultValue: 5432),
+      database: const String.fromEnvironment('DB_NAME', defaultValue: 'db_dokterabdurrahman'),
+      username: const String.fromEnvironment('DB_USER', defaultValue: 'dokter_admin'),
+      password: const String.fromEnvironment('DB_PASS', defaultValue: ''),
     );
 
     return await Connection.open(

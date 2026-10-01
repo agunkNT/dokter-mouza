@@ -11,8 +11,8 @@ class ApiService {
 
   /// ─── Konfigurasi ────────────────────────────────────────────────
   /// Ganti URL ini sesuai alamat server production.
-  static const String baseUrl = 'http://103.151.140.138:5000';
-  static const String _apiKey = 'DokterAbdurrahman-MediaKey-2026!';
+  static const String baseUrl = String.fromEnvironment('API_BASE_URL', defaultValue: 'http://103.151.140.138:5000');
+  static const String _apiKey = String.fromEnvironment('API_KEY', defaultValue: '');
 
   static Map<String, String> get _headers => {'X-Api-Key': _apiKey};
 
