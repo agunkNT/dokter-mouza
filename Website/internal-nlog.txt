@@ -480,3 +480,21 @@
 2026-07-28 09:46:50.3635 Info Registered target NLog.Targets.ConsoleTarget(Name=lifetimeConsole)
 2026-07-28 09:46:50.3798 Info NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 6.0.6.4706. Product version: 6.0.6+1913a823347d47c0b004ce714af74436261daf20. GlobalAssemblyCache: False
 2026-07-28 09:46:50.4883 Info Configuration initialized: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=60, AutoReload=true, FilePath=D:\Project\DokterAbdurrahman\Website\bin\Debug\net10.0\nlog.config
+2026-11-02 14:34:18.5836 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-11-02 14:34:18.6103 Info Registered target NLog.Targets.FileTarget(Name=ownFile-web)
+2026-11-02 14:34:18.6241 Info Registered target NLog.Targets.ConsoleTarget(Name=lifetimeConsole)
+2026-11-02 14:34:18.6332 Info NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 6.0.6.4706. Product version: 6.0.6+1913a823347d47c0b004ce714af74436261daf20. GlobalAssemblyCache: False
+2026-11-02 14:34:18.6866 Info Configuration initialized: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=60, AutoReload=true, FilePath=D:\Project\dokter-mouza\Website\bin\Debug\net10.0\nlog.config
+2026-11-02 14:34:19.2725 Info LogFactory shutting down ...
+2026-11-02 14:34:19.2725 Info Closing old configuration.
+2026-11-02 14:34:19.2725 Info LogFactory shutdown completed.
+2026-11-02 14:34:50.6734 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-11-02 14:34:50.6822 Info Registered target NLog.Targets.FileTarget(Name=ownFile-web)
+2026-11-02 14:34:50.6822 Info Registered target NLog.Targets.ConsoleTarget(Name=lifetimeConsole)
+2026-11-02 14:34:50.7014 Info NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 6.0.6.4706. Product version: 6.0.6+1913a823347d47c0b004ce714af74436261daf20. GlobalAssemblyCache: False
+2026-11-02 14:34:50.7674 Info Configuration initialized: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=60, AutoReload=true, FilePath=D:\Project\dokter-mouza\Website\bin\Debug\net10.0\nlog.config
+2026-11-02 14:35:08.7235 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-11-02 14:35:08.7330 Info Registered target NLog.Targets.FileTarget(Name=ownFile-web)
+2026-11-02 14:35:08.7330 Info Registered target NLog.Targets.ConsoleTarget(Name=lifetimeConsole)
+2026-11-02 14:35:08.7465 Info NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 6.0.6.4706. Product version: 6.0.6+1913a823347d47c0b004ce714af74436261daf20. GlobalAssemblyCache: False
+2026-11-02 14:35:08.8130 Info Configuration initialized: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=60, AutoReload=true, FilePath=D:\Project\dokter-mouza\Website\bin\Debug\net10.0\nlog.config
