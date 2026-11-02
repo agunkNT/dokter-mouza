@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: dokter-mouza
+    env: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    region: singapore # singapore atau oregon / frankfurt
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: PORT
+        value: 8080
+      - key: ConnectionStrings__DefaultConnection
+        sync: false # Set secara manual di Render Dashboard untuk keamanan
+      - key: ApiSettings__MediaUploadKey
+        sync: false

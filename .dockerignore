@@ -1,0 +1,14 @@
+**/.git
+**/.vs
+**/bin
+**/obj
+**/publish
+Website/bin
+Website/obj
+Website/publish
+Website/.vs
+Website/Import
+Website/internal-nlog.txt
+*.user
+*.log
+Apk/
